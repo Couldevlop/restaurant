@@ -16,6 +16,23 @@ public class JwtUtil {
     private final Key secretKey = Keys.hmacShaKeyFor("05f26aac28bc1d2b2ef4306e1195bd5320bf7e46ad2d988ec556b61beb78be65".getBytes());
 
 
+
+    // Extraction des claims
+    private Claims extractAllClaims(String token){
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+
+    //Methode génerique pour extraire n'importe qu'elle informations du token JWT
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolve){
+        final Claims claims =  extractAllClaims(token); // Extraction des claims (données) du token JWT
+        return claimsResolve.apply(claims); // applique la fonction passée en argument
+    }
+
     // Methode pour extraire l'username du token JWT
     public String extractUsername(String token){
         return extractClaim(token, Claims::getSubject);
@@ -28,21 +45,6 @@ public class JwtUtil {
     }
 
 
-    //Methode génerique pour extraire n'importe qu'elle informations du token JWT
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolve){
-        final Claims claims =  extractAllClaims(token); // Extraction des claims (données) du token JWT
-        return claimsResolve.apply(claims); // applique la fonction passée en argument
-    }
-
-
-    // Extraction des claims
-    private Claims extractAllClaims(String token){
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
 
     // Verifier si le token est expiré
     private Boolean isTokenExpired(String token){

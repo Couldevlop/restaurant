@@ -35,8 +35,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         //Verifier si l'en-tête Authorization contient un token JWT
         if(authorizationHeader != null && authorizationHeader.startsWith("Bearer")){
-            jwt = authorizationHeader.substring(7);
             try{
+                jwt = authorizationHeader.substring(7);
                 username = jwtUtil.extractUsername(jwt);
             }catch (ExpiredJwtException e){
                 System.out.println("JWT Token expired");

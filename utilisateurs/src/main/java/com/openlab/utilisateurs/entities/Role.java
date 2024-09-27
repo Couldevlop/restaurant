@@ -15,6 +15,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Setter
 @Getter
+@Entity
 public class Role implements Serializable {
 
     @Id

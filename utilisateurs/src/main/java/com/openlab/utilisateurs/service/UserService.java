@@ -1,6 +1,5 @@
 package com.openlab.utilisateurs.service;
 
-import com.openlab.utilisateurs.dto.UserDTO;
 import com.openlab.utilisateurs.dto.UserResponseDTO;
 import com.openlab.utilisateurs.entities.User;
 import com.openlab.utilisateurs.mapper.UserMapper;
@@ -12,7 +11,8 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+
+    private final  PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
@@ -22,9 +22,21 @@ public class UserService {
     }
 
     public UserResponseDTO register(User user){
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        String password = user.getPassword();
+        // Vérifiez que l'utilisateur n'est pas null
+        if (user == null || user.getUsername() == null || user.getPassword() == null) {
+            throw new IllegalArgumentException("L'utilisateur ou ses informations obligatoires sont null");
+        }
+        String passwordEncoded = passwordEncoder.encode(password);
+        user.setPassword(password);
+        System.out.println("Mot de passe après encodage : " + user.getPassword());
         User userSaved = userRepository.save(user);
-        return userMapper.mapToDTO(userSaved);
+
+        //Vérifier si l'utilisateur est valide
+        if(userSaved == null){
+            throw new IllegalStateException("Utilisateur sauvegardé invalide" + user.getPassword());
+        }
+        return  userMapper.mapToDTO(userSaved);
     }
 
     public UserResponseDTO findByUsername(String username){
