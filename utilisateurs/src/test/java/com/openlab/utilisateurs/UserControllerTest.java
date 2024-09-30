@@ -1,14 +1,13 @@
 package com.openlab.utilisateurs;
 
-import com.openlab.utilisateurs.dto.UserDTO;
 import com.openlab.utilisateurs.dto.UserResponseDTO;
 import com.openlab.utilisateurs.entities.Role;
 import com.openlab.utilisateurs.entities.User;
 import com.openlab.utilisateurs.enums.ERole;
 import com.openlab.utilisateurs.mapper.UserMapper;
+import com.openlab.utilisateurs.repository.RoleRepository;
 import com.openlab.utilisateurs.repository.UserRepository;
 import com.openlab.utilisateurs.service.UserService;
-import com.openlab.utilisateurs.web.UserController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,10 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +26,6 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 public class UserControllerTest {
 
-
     @Mock
     private UserRepository userRepository;
 
@@ -39,36 +34,39 @@ public class UserControllerTest {
 
     @InjectMocks
     private UserService userService;
+
     @Mock
-    private PasswordEncoder passwordEncoder;  // Mock du PasswordEncoder
+    private PasswordEncoder passwordEncoder;
 
     private User user;
-    private UserDTO userDTO;
     private UserResponseDTO userResponseDTO;
-
-
-
+    @Mock
+    private RoleRepository roleRepository;
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
 
+        // Créer des rôles et les associer à l'utilisateur
         Set<Role> listeRole = new HashSet<>();
-        Role role = new Role();
-        role.setId(1L);
-        role.setName(ERole.ROLE_CLIENT);
-        listeRole.add(role);
+        Role roleClient = new Role();
+        roleClient.setId(1L);
+        roleClient.setName(ERole.ROLE_CLIENT);
+        roleRepository.save(roleClient);
+        listeRole.add(roleClient);
 
-        Role role1 = new Role();
-        role1.setId(1L);
-        role1.setName(ERole.ROLE_SERVER);
-        listeRole.add(role1);
+        Role roleServer = new Role();
+        roleServer.setId(2L);
+        roleServer.setName(ERole.ROLE_SERVER);
+        roleRepository.save(roleServer);
+        listeRole.add(roleServer);
 
+        Role roleSupervisor = new Role();
+        roleSupervisor.setId(3L);
+        roleSupervisor.setName(ERole.ROLE_SUPERVISOR);
+        roleRepository.save(roleSupervisor);
+        listeRole.add(roleSupervisor);
 
-        Role role2 = new Role();
-        role2.setId(1L);
-        role2.setName(ERole.ROLE_SUPERVISOR);
-        listeRole.add(role2);
-
+        // Initialiser un utilisateur
         user = new User();
         user.setId(1L);
         user.setUsername("testuser");
@@ -76,19 +74,13 @@ public class UserControllerTest {
         user.setEmail("coulwao@gmail.com");
         user.setRoles(listeRole);
 
-
-        /*userDTO = new UserDTO();
-        userDTO.setUsername("testuser");
-        userDTO.setPassword("password");*/
-
+        // Créer un UserResponseDTO correspondant
         userResponseDTO = new UserResponseDTO();
         userResponseDTO.setUsername("testuser");
-
     }
 
-
     @Test
-    public void testRegisterUser(){
+    public void testRegisterUser() {
         // Simuler l'encodage du mot de passe
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
 
@@ -99,12 +91,11 @@ public class UserControllerTest {
         when(userMapper.mapToDTO(any(User.class))).thenReturn(userResponseDTO);
 
         // Appel de la méthode à tester
-        UserResponseDTO response;
-        response = userService.register(user);
+        UserResponseDTO response = userService.register(user);
 
         // Vérification des résultats
-       assertNotNull(response);  // Assure que la réponse n'est pas null
-        assertEquals("testuser", response.getUsername());  // Vérifie que le username est correct
+        assertNotNull(response);  // Vérifie que la réponse n'est pas nulle
+        assertEquals("testuser", response.getUsername());  // Vérifie que le nom d'utilisateur est correct
 
         // Vérifier que les mocks ont été appelés
         verify(passwordEncoder, times(1)).encode(anyString());

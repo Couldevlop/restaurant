@@ -1,9 +1,9 @@
 package com.openlab.utilisateurs.security;
 
 import com.openlab.utilisateurs.entities.User;
+import com.openlab.utilisateurs.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import com.openlab.utilisateurs.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
