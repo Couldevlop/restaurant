@@ -65,6 +65,7 @@ public class UserControllerTest {
         loginRequest = new LoginRequest("testuser", "password");
 
         user = new User();
+        user.setId(1L);
         user.setUsername("testuser");
         user.setPassword("password");
     }
@@ -97,7 +98,7 @@ public class UserControllerTest {
                 .thenReturn(authentication);  // Authentification réussie
 
         // Simuler la génération d'un token
-        when(jwtUtil.generateToken("testuser")).thenReturn("mocked-jwt-token");
+        when(jwtUtil.generateToken(anyString())).thenReturn("mocked-jwt-token");
 
         // Appel de la méthode du contrôleur
         ResponseEntity<String> response = userController.login(loginRequest);
@@ -110,9 +111,8 @@ public class UserControllerTest {
         // Vérification des interactions
         verify(authenticationManager, times(1))
                 .authenticate(any(UsernamePasswordAuthenticationToken.class));
-        verify(jwtUtil, times(1)).generateToken("testuser");
+        verify(jwtUtil, times(1)).generateToken(anyString());
     }
-
 
     @Test
     public void testLoginFailure() {

@@ -43,7 +43,7 @@ public class UtilisateursApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		// Créer des rôles et les associer à l'utilisateur
-		Set<Role> listeRole = new HashSet<>();
+		/*Set<Role> listeRole = new HashSet<>();
 		Role roleClient = new Role();
 		roleClient.setId(1L);
 		roleClient.setName(ERole.ROLE_CLIENT);
@@ -78,7 +78,7 @@ public class UtilisateursApplication implements CommandLineRunner {
 		String nom	=ERole.valueOf(role).name();
 		System.out.println("+++++++role +++++++" + nom);
             return nom;
-        });
+        });*/
 
 	}
 }

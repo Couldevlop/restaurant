@@ -26,7 +26,7 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    @Transactional
+
     public UserResponseDTO register(User user) {
 
         PasswordEncoder passEncod = new BCryptPasswordEncoder();

@@ -39,8 +39,6 @@ public class UserMapper {
         }else {
             dto.setRoles(Collections.emptySet());
         }
-
-
         return dto;
     }
 }
