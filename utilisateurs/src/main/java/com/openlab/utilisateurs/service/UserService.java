@@ -9,6 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserService {
 
@@ -45,5 +48,9 @@ public class UserService {
 
     public User findEntityByUsername(String username){
         return userRepository.findByUsername(username).orElse(null);
+    }
+
+    public List<UserResponseDTO> findAll(){
+       return userRepository.findAll().stream().map(userMapper::mapToDTO).collect(Collectors.toList());
     }
 }

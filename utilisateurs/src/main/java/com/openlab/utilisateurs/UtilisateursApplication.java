@@ -74,6 +74,11 @@ public class UtilisateursApplication implements CommandLineRunner {
 		//userRepository.save(user);
 	UserResponseDTO userSaved = userService.register(user);
 		System.out.println("+++++++++++" + userSaved.getUsername());
+		userSaved.getRoles().stream().map(role -> {
+		String nom	=ERole.valueOf(role).name();
+		System.out.println("+++++++role +++++++" + nom);
+            return nom;
+        });
 
 	}
 }
