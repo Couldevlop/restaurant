@@ -1,0 +1,18 @@
+package com.openlab.tables.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class TablesAlreadyExistsException extends RuntimeException{
+    public TablesAlreadyExistsException() {
+    }
+
+    public TablesAlreadyExistsException(String message) {
+        super(message);
+    }
+
+    public TablesAlreadyExistsException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}

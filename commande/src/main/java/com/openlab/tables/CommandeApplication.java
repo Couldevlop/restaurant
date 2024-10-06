@@ -1,4 +1,4 @@
-package com.openlab.commande;
+package com.openlab.tables;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package com.openlab.commande;
+package com.openlab.tables;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
