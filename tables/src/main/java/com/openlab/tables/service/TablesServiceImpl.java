@@ -2,6 +2,7 @@ package com.openlab.tables.service;
 
 import com.openlab.tables.dto.TablesDTO;
 import com.openlab.tables.entity.Tables;
+import com.openlab.tables.exception.TablesAlreadyExistsException;
 import com.openlab.tables.exception.TablesNotFoundException;
 import com.openlab.tables.exception.TablesObjectIllegalArgumentException;
 import com.openlab.tables.mapper.TablesMapper;
@@ -23,13 +24,14 @@ public class TablesServiceImpl implements TablesService{
 
     @Override
     public TablesDTO createTable(TablesDTO dto) {
-        if(dto != null){
-            Tables tables = tablesRepository.save(tablesMapper.mapToEntity(dto));
-            return tablesMapper.mapToDTO(tables);
-        }else {
-          throw   new  TablesObjectIllegalArgumentException(" L'objet Tables {} fourni est null ou le numéro de la table existe déjà");
-        }
+        if(dto == null){
+            throw   new  TablesObjectIllegalArgumentException(" L'objet Tables {} fourni est null ou le numéro de la table existe déjà");
 
+        }if(tablesRepository.existsByNumero(dto.getNumero())){
+            throw new TablesAlreadyExistsException("Le numero de la tables existe déjà");
+        }
+        Tables tables = tablesRepository.save(tablesMapper.mapToEntity(dto));
+        return tablesMapper.mapToDTO(tables);
     }
 
     @Override

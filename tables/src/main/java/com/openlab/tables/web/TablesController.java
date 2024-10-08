@@ -1,15 +1,13 @@
 package com.openlab.tables.web;
 
 import com.openlab.tables.dto.TablesDTO;
+import com.openlab.tables.exception.ErrorResponse;
+import com.openlab.tables.exception.TablesAlreadyExistsException;
 import com.openlab.tables.exception.TablesObjectIllegalArgumentException;
 import com.openlab.tables.service.TablesService;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ProblemDetail;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
-
-import java.lang.module.FindException;
 import java.util.List;
 
 @RequestMapping("/api/tables")
@@ -22,24 +20,12 @@ public class TablesController {
     }
 
     @PostMapping
-    public ResponseEntity<TablesDTO> createTables(@RequestBody TablesDTO dto){
+    public ResponseEntity<Object> createTables(@RequestBody TablesDTO dto){
         try{
             return  ResponseEntity.ok(tablesService.createTable(dto));
-        }catch (TablesObjectIllegalArgumentException e){
-            ErrorResponse errorResponse = new ErrorResponse() {
-                @Override
-                public HttpStatusCode getStatusCode() {
-                    return null;
-                }
-
-                @Override
-                public ProblemDetail getBody() {
-                    return null;
-                }
-            };
-
-        }
-
+        }catch (TablesAlreadyExistsException e){
+              throw new TablesAlreadyExistsException(e.getMessage());
+            }
 
     }
 
