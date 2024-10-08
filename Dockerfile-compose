@@ -1,0 +1,93 @@
+version: '3'
+services:
+  eureka-server:
+    image: springcloud/eureka
+    ports:
+      - "8761:8761"
+    networks:
+      - restaurantnet
+
+  api-gateway:
+    image: your-api-gateway-image
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka-server
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+    networks:
+      - restaurantnet
+
+  commande-service:
+    image: your-commande-service-image
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka-server
+      - mysql
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+    networks:
+      - restaurantnet
+
+  menu-service:
+    image: your-menu-service-image
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eureka-server
+      - mysql
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+    networks:
+      - restaurantnet
+
+  facture-service:
+    image: your-facture-service-image
+    ports:
+      - "8083:8083"
+    depends_on:
+      - eureka-server
+      - mysql
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+    networks:
+      - restaurantnet
+
+  utilisateur-service:
+    image: your-utilisateur-service-image
+    ports:
+      - "8084:8084"
+    depends_on:
+      - eureka-server
+      - mysql
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+    networks:
+      - restaurantnet
+
+  tables-service:
+    image: your-tables-service-image
+    ports:
+      - "8085:8085"
+    depends_on:
+      - eureka-server
+      - mysql
+    environment:
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+    networks:
+      - restaurantnet
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: restaurantdb
+    ports:
+      - "3306:3306"
+    networks:
+      - restaurantnet
+
+networks:
+  restaurantnet:
+    driver: bridge
