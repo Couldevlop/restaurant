@@ -9,7 +9,7 @@ public interface MenuService {
     MenuDTO findMenuById(long id);
     List<MenuDTO> getAllMenu();
     MenuDTO updateMenu(MenuDTO dto);
-    MenuDTO deleteMenu(long id);
+    void deleteMenu(long id);
     MenuDTO findMenuByNom(String nom);
 
 }
