@@ -1,5 +1,6 @@
 package com.openlab.menu.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 @Setter
@@ -8,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class PlatDTO {
+    @JsonIgnore
     private Long id;
     private String nom;
     private double prix;

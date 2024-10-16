@@ -1,9 +1,6 @@
 package com.openlab.menu.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
@@ -21,4 +18,7 @@ public class Plat implements Serializable {
     private String nom;
     private double prix;
     private String description;
+    @ManyToOne
+    @JoinColumn(name = "menu_id") 
+    private Menu menu;
 }

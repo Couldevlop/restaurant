@@ -30,7 +30,7 @@ public class MenuServiceImpl implements MenuService{
         if(dto == null){
             throw new MenuObjectIllegalArgumentException("L'object Menu{} est null");
         }
-        if(menuRepository.existsByNom(dto.getNom()).isPresent()){
+        if(menuRepository.existsByNom(dto.getNom()).isEmpty()){
             throw new MenuAlreadyExistsException("Le nom du menu existe déjà");
         }
         Menu menu = menuRepository.save(menuMapper.mapToEntity(dto));
@@ -53,20 +53,21 @@ public class MenuServiceImpl implements MenuService{
 
     @Override
     public MenuDTO updateMenu(MenuDTO dto) {
-       Optional<Menu> menuDTOOptional = menuRepository.findById(dto.getId());
-       if(menuDTOOptional.isEmpty()){
-          throw new MenuNotFoundException("Aucun menu n'a été trouvé avec l'id: " + dto.getId());
-       }
+        Optional<Menu> menuDTOOptional = menuRepository.findById(dto.getId());
+        if (menuDTOOptional.isEmpty()) {
+            throw new MenuNotFoundException("Aucun menu n'a été trouvé avec l'id: " + dto.getId());
+        }
         Menu oldMenu = menuDTOOptional.get();
 
-       // construire un set de plat
-       Set<Plat> updatePlat = dto.getPlats().stream().map(platDTO->{
-          return Plat.builder()
-                   .id(platDTO.getId())
-                   .prix(platDTO.getPrix())
-                   .description(platDTO.getDescription())
-                   .build();
-       }).collect(Collectors.toSet());
+        // Build a set of plates
+        Set<Plat> updatePlat = dto.getPlats().stream().map(platDTO -> {
+            return Plat.builder()
+                    .id(platDTO.getId())
+                    .prix(platDTO.getPrix())
+                    .description(platDTO.getDescription())
+                    .menu(oldMenu) // Associate the Plat with the current Menu
+                    .build();
+        }).collect(Collectors.toSet());
         oldMenu.setId(dto.getId());
         oldMenu.setNom(dto.getNom());
         oldMenu.setPlats(updatePlat);
