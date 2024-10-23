@@ -1,6 +1,7 @@
 package com.openlab.menu.web;
 
 import com.openlab.menu.dto.MenuDTO;
+import com.openlab.menu.dto.PlatDTO;
 import com.openlab.menu.exception.MenuNotFoundException;
 import com.openlab.menu.exception.MenuObjectIllegalArgumentException;
 import com.openlab.menu.repository.MenuRepository;
@@ -55,5 +56,24 @@ public class MenuController {
     public ResponseEntity<String> deleteMenuDTO(@PathVariable long id) {
         menuService.deleteMenu(id);
         return ResponseEntity.ok("Le Menu avec l'id: " + id);
+    }
+
+    // Endpoint pour ajouter un plat à un menu existant
+    @PostMapping("/{menuId}/plats")
+    public ResponseEntity<PlatDTO> addPlatToMenu(@PathVariable Long menuId, @RequestBody PlatDTO platDTO) {
+        return ResponseEntity.ok(menuService.addPlatToMenu(menuId, platDTO));
+    }
+
+    // Endpoint pour modifier un plat d'un menu
+    @PutMapping("/{menuId}/plats")
+    public ResponseEntity<PlatDTO> updatePlatInMenu(@PathVariable Long menuId, @RequestBody PlatDTO platDTO) {
+        return ResponseEntity.ok(menuService.updatePlat(menuId, platDTO));
+    }
+
+    // Endpoint pour supprimer un plat d'un menu
+    @DeleteMapping("/{menuId}/plats/{platId}")
+    public ResponseEntity<String> deletePlatFromMenu(@PathVariable Long menuId, @PathVariable Long platId) {
+        menuService.deletePlatFromMenu(menuId, platId);
+        return ResponseEntity.ok("Le plat avec l'id " + platId + " a été supprimé du menu " + menuId);
     }
 }
