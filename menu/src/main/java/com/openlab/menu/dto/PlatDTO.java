@@ -9,7 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class PlatDTO {
-    @JsonIgnore
     private Long id;
     private String nom;
     private double prix;

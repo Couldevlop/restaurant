@@ -7,6 +7,7 @@ import com.openlab.menu.entity.Plat;
 import com.openlab.menu.exception.MenuAlreadyExistsException;
 import com.openlab.menu.exception.MenuNotFoundException;
 import com.openlab.menu.exception.MenuObjectIllegalArgumentException;
+import com.openlab.menu.exception.PlatNotFoundException;
 import com.openlab.menu.mapper.MenuMapper;
 import com.openlab.menu.repository.MenuRepository;
 import com.openlab.menu.utils.PlatComparator;
@@ -67,21 +68,22 @@ public class MenuServiceImpl implements MenuService{
         // Mise à jour des attributs de Menu uniquement
         existingMenu.setNom(dto.getNom());
 
-        // Vérifier si la collection de plats doit être modifiée
+        // Comparer l'état actuel des plats avec ceux dans le DTO
         if (dto.getPlats() != null && !dto.getPlats().isEmpty()) {
             boolean platsChanged = platComparator.havePlatsChanged(existingMenu.getPlats(), dto.getPlats());
 
+            // Si la collection a changé, la mettre à jour
             if (platsChanged) {
-                // Mettre à jour la collection des plats seulement si nécessaire
                 updatePlats(existingMenu, dto);
             }
         }
 
-        // Sauvegarder le menu sans toucher aux plats s'ils n'ont pas changé
+        // Sauvegarder le menu avec ou sans les plats mis à jour
         Menu savedMenu = menuRepository.save(existingMenu);
 
         return menuMapper.mapToDTO(savedMenu);
     }
+
 
     // Mise à jour de la collection de plats si nécessaire
     private void updatePlats(Menu existingMenu, MenuDTO dto) {
@@ -90,27 +92,27 @@ public class MenuServiceImpl implements MenuService{
                 Plat plat = existingMenu.getPlats().stream()
                         .filter(p -> p.getId().equals(platDTO.getId()))
                         .findFirst()
-                        .orElse(null); // Retourner null si le plat n'existe pas
+                        .orElse(null); // Ne crée pas un nouveau plat si l'ID n'existe pas
 
                 if (plat == null) {
-                    // Si le plat n'existe pas, créer un nouveau plat
+                    // Si le plat n'existe pas, en créer un nouveau
                     plat = new Plat();
-                    plat.setMenu(existingMenu);
                 }
 
-                // Mettre à jour les attributs du plat seulement si l'objet existe ou est créé
                 plat.setNom(platDTO.getNom());
                 plat.setPrix(platDTO.getPrix());
                 plat.setDescription(platDTO.getDescription());
+                plat.setMenu(existingMenu); // Associer le plat au menu
 
                 return plat;
             }).collect(Collectors.toSet());
 
-            // Remplacer la collection des plats uniquement si elle a changé
-            existingMenu.getPlats().clear();
+            // Mettre à jour la collection des plats sans la vider complètement
+            existingMenu.getPlats().retainAll(updatedPlats);
             existingMenu.getPlats().addAll(updatedPlats);
         }
     }
+
 
 
     @Override
@@ -187,4 +189,33 @@ public class MenuServiceImpl implements MenuService{
         menu.getPlats().remove(platToRemove);
         menuRepository.save(menu);
     }
+
+
+    @Override
+    public PlatDTO updatePlatInMenu(long menuId, PlatDTO platDTO) {
+        Optional<Menu> menuOptional = menuRepository.findById(menuId);
+        if (menuOptional.isEmpty()) {
+            throw new MenuNotFoundException("Aucun menu n'a été trouvé avec l'id: " + menuId);
+        }
+
+        Menu menu = menuOptional.get();
+        Optional<Plat> platOptional = menu.getPlats().stream()
+                .filter(plat -> plat.getId().equals(platDTO.getId()))
+                .findFirst();
+
+        if (platOptional.isEmpty()) {
+            throw new PlatNotFoundException("Le plat n'existe pas pour le menu spécifié.");
+        }
+
+        Plat platToUpdate = platOptional.get();
+        platToUpdate.setNom(platDTO.getNom());
+        platToUpdate.setPrix(platDTO.getPrix());
+        platToUpdate.setDescription(platDTO.getDescription());
+
+        // Mettre à jour le plat dans la collection du menu
+        menuRepository.save(menu);
+
+        return menuMapper.mapPlatToDTO(platToUpdate);
+    }
+
 }

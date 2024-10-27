@@ -76,4 +76,13 @@ public class MenuController {
         menuService.deletePlatFromMenu(menuId, platId);
         return ResponseEntity.ok("Le plat avec l'id " + platId + " a été supprimé du menu " + menuId);
     }
+
+
+    @PutMapping("/{menuId}/plats/{platId}")
+    public ResponseEntity<PlatDTO> updatePlatInMenu(@PathVariable long menuId, @PathVariable long platId, @RequestBody PlatDTO platDTO) {
+        platDTO.setId(platId); // Assurez-vous que l'ID est correct
+        PlatDTO updatedPlat = menuService.updatePlatInMenu(menuId, platDTO);
+        return ResponseEntity.ok(updatedPlat);
+    }
+
 }

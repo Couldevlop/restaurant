@@ -17,5 +17,6 @@ public interface MenuService {
     PlatDTO addPlatToMenu(Long menuId, PlatDTO platDTO);
     PlatDTO updatePlat(Long menuId, PlatDTO platDTO);
     void deletePlatFromMenu(Long menuId, Long platId);
+    PlatDTO updatePlatInMenu(long menuId, PlatDTO platDTO);
 
 }
