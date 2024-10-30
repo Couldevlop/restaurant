@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class FactureDTO {
     private Long id;
     private Long commandeId;
-    private Long tableNumero;
+    private int tableNumero;
     private double montantTotal;
     private LocalDateTime dateFacture;
 }

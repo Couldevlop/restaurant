@@ -1,29 +1,26 @@
-package com.openlab.facturation.entity;
+package com.openlab.commandes.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
-@Setter
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Facture implements Serializable {
+@Setter
+@Getter
+@Builder
+public class Commande implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Long id;
-    private Long commandeId;
+    private Long id;
+    private Long menuId;
     private int tableNumero;
     private double montantTotal;
-    private LocalDateTime dateFacture;
+    private LocalDate dateCommande;
 }
